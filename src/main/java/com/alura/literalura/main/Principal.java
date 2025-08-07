@@ -9,6 +9,7 @@ import com.alura.literalura.repository.AutorRepository;
 import com.alura.literalura.service.ConsumoApi;
 import com.alura.literalura.service.ConverteDados;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -77,7 +78,7 @@ public class Principal {
     }
 
     private void buscarLivroWeb() {
-        System.out.println("Digite o nome do livro para busca (em inglês):");
+        System.out.println("Digite o nome do livro para busca :");
         var nomeLivro = leitura.nextLine();
         var json = consumo.obterDados(ENDERECO + "?search=" + nomeLivro.replace(" ", "+"));
 
@@ -104,18 +105,13 @@ public class Principal {
             // Associa o autor ao livro
             livro.setAutor(autor);
 
-            System.out.println("Título: " + livro.getTitulo());
-            System.out.println("Idioma: " + livro.getIdioma());
-            System.out.println("Downloads: " + livro.getNumeroDeDownloads());
-            Autor autorLivro = livro.getAutor();
-            System.out.printf("Autor: %s (%d - %d)%n",
-                    autorLivro.getNome(),
-                    autorLivro.getAnoDeNascimento(),
-                    autorLivro.getAnoDeFalecimento());
-
-
             // Salva o livro (e o autor, por causa do CascadeType.ALL) no banco de dados
-            livroRepository.save(livro);
+            try {
+                livroRepository.save(livro);
+            } catch (DataIntegrityViolationException e) {
+                System.out.println("Livro já existe no nosso Banco de Dados: " + livro.getTitulo());
+
+            }
 
             System.out.println("----- LIVRO ENCONTRADO E SALVO -----");
             System.out.println(livro); // Usando o toString() que criamos

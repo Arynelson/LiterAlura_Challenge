@@ -20,7 +20,6 @@ public class ConsumoApi {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(endereco))
                 .build();
-
         HttpResponse<String> response = null;
         try {
             // Envia a requisição e obtém a resposta como uma String
@@ -29,10 +28,9 @@ public class ConsumoApi {
             // Captura exceções de IO (rede) ou se a thread for interrompida
             throw new RuntimeException(e);
         }
-
         // Retorna o corpo da resposta (o JSON)
         String json = response.body();
-        System.out.println("JSON retornado pela API:\n" + json);
+
         return json;
     }
 }
